@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class ApiHolder {
-    fun retrofitImpl() : IDataSource =
+    fun retrofitImpl(): IDataSource =
         Retrofit
             .Builder()
             .baseUrl(BASE_URL)
@@ -23,7 +23,7 @@ class ApiHolder {
 
     private val gson = GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
-        .setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)
+        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DOTS)
         .create()
 
     private fun createClient(interceptor: Interceptor): OkHttpClient =
