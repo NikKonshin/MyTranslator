@@ -5,17 +5,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikitakonshin.mytranslator.R
+import com.nikitakonshin.mytranslator.application.TranslatorApp
 import com.nikitakonshin.mytranslator.model.entity.AppState
 import com.nikitakonshin.mytranslator.model.entity.DataModel
 import com.nikitakonshin.mytranslator.presenter.IPresenter
 import com.nikitakonshin.mytranslator.presenter.TranslatePresenter
 import com.nikitakonshin.mytranslator.view.IView
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
+import com.nikitakonshin.mytranslator.viewmodel.BaseViewModel
+import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
 import kotlinx.android.synthetic.main.fragment_translate.*
+import javax.inject.Inject
 
 class TranslateFragment : BaseFragment<AppState>() {
+
+    @Inject
+    internal lateinit var viewModelFactory: ViewModelProvider.Factory
+
+    override val model: TranslateViewModel by lazy {
+        viewModelFactory.create(TranslateViewModel::class.java)
+    }
+    private val observer = Observer<AppState>{renderData(it)}
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -38,13 +52,16 @@ class TranslateFragment : BaseFragment<AppState>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        TranslatorApp.component.inject(this)
         super.onViewCreated(view, savedInstanceState)
+
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    presenter.getData(searchWord, true)
+                    model.getData(searchWord, true).observe(this@TranslateFragment, observer)
+//                    presenter.getData(searchWord, true)
                 }
             })
             searchDialogFragment.show(childFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -85,13 +102,11 @@ class TranslateFragment : BaseFragment<AppState>() {
         }
     }
 
-    override fun createPresenter(): IPresenter<AppState, IView> = TranslatePresenter()
-
     private fun showErrorScreen(error: String?) {
         showViewError()
         error_textview.text = error ?: getString(R.string.undefined_error)
         reload_button.setOnClickListener {
-            presenter.getData("hi", true)
+            model.getData("hi", true)
         }
     }
 
@@ -113,3 +128,4 @@ class TranslateFragment : BaseFragment<AppState>() {
         error_linear_layout.visibility = View.VISIBLE
     }
 }
+
