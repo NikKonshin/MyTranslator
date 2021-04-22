@@ -6,30 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.nikitakonshin.mytranslator.R
-import com.nikitakonshin.mytranslator.application.TranslatorApp
 import com.nikitakonshin.mytranslator.model.entity.AppState
 import com.nikitakonshin.mytranslator.model.entity.DataModel
-import com.nikitakonshin.mytranslator.presenter.IPresenter
-import com.nikitakonshin.mytranslator.presenter.TranslatePresenter
-import com.nikitakonshin.mytranslator.view.IView
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
-import com.nikitakonshin.mytranslator.viewmodel.BaseViewModel
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
 import kotlinx.android.synthetic.main.fragment_translate.*
-import javax.inject.Inject
+import org.koin.android.viewmodel.ext.android.viewModel
 
 class TranslateFragment : BaseFragment<AppState>() {
 
-    @Inject
-    internal lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    override val model: TranslateViewModel by lazy {
-        viewModelFactory.create(TranslateViewModel::class.java)
-    }
-    private val observer = Observer<AppState>{renderData(it)}
+    override val model by viewModel<TranslateViewModel>()
+    private val observer = Observer<AppState> { renderData(it) }
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -52,7 +41,6 @@ class TranslateFragment : BaseFragment<AppState>() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        TranslatorApp.component.inject(this)
         super.onViewCreated(view, savedInstanceState)
 
         search_fab.setOnClickListener {
@@ -60,8 +48,7 @@ class TranslateFragment : BaseFragment<AppState>() {
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
                 override fun onClick(searchWord: String) {
-                    model.getData(searchWord, true).observe(this@TranslateFragment, observer)
-//                    presenter.getData(searchWord, true)
+                    model.getLiveData(searchWord, true).observe(this@TranslateFragment, observer)
                 }
             })
             searchDialogFragment.show(childFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
@@ -106,7 +93,7 @@ class TranslateFragment : BaseFragment<AppState>() {
         showViewError()
         error_textview.text = error ?: getString(R.string.undefined_error)
         reload_button.setOnClickListener {
-            model.getData("hi", true)
+            model.getLiveData("hi", true)
         }
     }
 

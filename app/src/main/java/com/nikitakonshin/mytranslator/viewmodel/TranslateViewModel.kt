@@ -3,37 +3,29 @@ package com.nikitakonshin.mytranslator.viewmodel
 import androidx.lifecycle.LiveData
 import com.nikitakonshin.mytranslator.model.entity.AppState
 import com.nikitakonshin.mytranslator.presenter.ineractors.TranslateInteractor
-import io.reactivex.observers.DisposableSingleObserver
-import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class TranslateViewModel @Inject constructor(
+class TranslateViewModel(
     private val interactor: TranslateInteractor
 ) :
     BaseViewModel<AppState>() {
 
-    private var appState: AppState? = null
+    override fun getLiveData(word: String, isOnline: Boolean): LiveData<AppState> {
+        liveDataForViewToObserve.value = AppState.Loading(null)
 
-    override fun getData(word: String, isOnline: Boolean): LiveData<AppState> {
-        compositeDisposable.add(
-            interactor.getData(word, isOnline)
-                .subscribeOn(schedulerProvider.io())
-                .observeOn(schedulerProvider.ui())
-                .doOnSubscribe { liveDataForViewToObserve.value = AppState.Loading(null) }
-                .subscribeWith(getObservable())
-        )
-        return super.getData(word, isOnline)
+        coroutineScope.launch { startInteractor(word, isOnline) }
+        return liveDataForViewToObserve
     }
 
-    private fun getObservable(): DisposableSingleObserver<AppState> {
-        return object : DisposableSingleObserver<AppState>() {
-            override fun onSuccess(t: AppState) {
-                appState = t
-                liveDataForViewToObserve.setValue(appState)
-            }
+    override fun handleError(t: Throwable) {
+        liveDataForViewToObserve.postValue(AppState.Error(t))
+    }
 
-            override fun onError(e: Throwable) {
-                liveDataForViewToObserve.value = AppState.Error(e)
-            }
+    private suspend fun startInteractor(word: String, online: Boolean) =
+        withContext(Dispatchers.IO) {
+            liveDataForViewToObserve.postValue(interactor.getData(word, online))
         }
-    }
 }
+

@@ -7,5 +7,6 @@ import com.nikitakonshin.mytranslator.viewmodel.BaseViewModel
 abstract class BaseFragment<T : AppState> : Fragment() {
 
     abstract val model: BaseViewModel<T>
+
     abstract fun renderData(appState: AppState)
 }
