@@ -10,9 +10,8 @@ import kotlinx.android.synthetic.main.item_translate_recycler_view.view.*
 
 class TranslateRVAdapter(
     private var onListItemClickListener: OnListItemClickListener,
-    private var data: List<DataModel>
 ) : RecyclerView.Adapter<TranslateRVAdapter.ViewHolder>() {
-
+    private var data: List<DataModel> = arrayListOf()
     fun setData(data: List<DataModel>) {
         this.data = data
         notifyDataSetChanged()

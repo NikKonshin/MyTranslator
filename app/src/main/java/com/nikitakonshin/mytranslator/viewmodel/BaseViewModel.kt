@@ -21,7 +21,7 @@ abstract class BaseViewModel<T : AppState>(
         cancelJob()
     }
 
-    private fun cancelJob() {
+    protected fun cancelJob() {
         coroutineScope.coroutineContext.cancelChildren()
     }
 

@@ -1,15 +1,13 @@
 package com.nikitakonshin.mytranslator.view.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.view.*
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
+import com.nikitakonshin.mytranslator.MainActivity
 import com.nikitakonshin.mytranslator.R
 import com.nikitakonshin.mytranslator.model.entity.AppState
 import com.nikitakonshin.mytranslator.model.entity.DataModel
+import com.nikitakonshin.mytranslator.utils.convertMeaningsToString
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
 import kotlinx.android.synthetic.main.fragment_translate.*
@@ -25,11 +23,20 @@ class TranslateFragment : BaseFragment<AppState>() {
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 
-    private var adapter: TranslateRVAdapter? = null
+    private val adapter: TranslateRVAdapter by lazy {
+        TranslateRVAdapter(onListItemClickListener)
+    }
     private val onListItemClickListener: TranslateRVAdapter.OnListItemClickListener =
         object : TranslateRVAdapter.OnListItemClickListener {
             override fun onItemClick(data: DataModel) {
-                Toast.makeText(context, data.text, Toast.LENGTH_SHORT).show()
+                fragmentManager?.beginTransaction()?.replace(
+                    R.id.container, DescriptionFragment.newInstance(
+                        data.text,
+                        convertMeaningsToString(data.meanings!!),
+                        data.meanings[0].imageUrl
+                    )
+                )?.addToBackStack(null)
+                    ?.commit()
             }
         }
 
@@ -42,7 +49,9 @@ class TranslateFragment : BaseFragment<AppState>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setHasOptionsMenu(true)
+        setActionbarHomeButtonAsUp()
+        main_activity_recyclerview.adapter = adapter
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
@@ -55,64 +64,30 @@ class TranslateFragment : BaseFragment<AppState>() {
         }
     }
 
-    override fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                val dataModel = appState.data
-                if (dataModel == null || dataModel.isEmpty()) {
-                    showErrorScreen(getString(R.string.empty_server_response_on_success))
-                } else {
-                    showViewSuccess()
-                    if (adapter == null) {
-                        adapter = TranslateRVAdapter(onListItemClickListener, dataModel)
-                        main_activity_recyclerview.layoutManager = LinearLayoutManager(context)
-                        main_activity_recyclerview.adapter = adapter
-                    } else {
-                        adapter!!.setData(dataModel)
-                    }
-                }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.history_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_history -> {
+                fragmentManager?.beginTransaction()
+                    ?.replace(R.id.container, HistoryFragment())?.addToBackStack(null)?.commit()
+                return true
             }
-            is AppState.Loading -> {
-                showViewLoading()
-                if (appState.progress != null) {
-                    progress_bar_horizontal.visibility = View.VISIBLE
-                    progress_bar_round.visibility = View.GONE
-                    progress_bar_horizontal.progress = appState.progress
-                } else {
-                    progress_bar_horizontal.visibility = View.GONE
-                    progress_bar_round.visibility = View.VISIBLE
-                }
-            }
-            is AppState.Error -> {
-                showErrorScreen(appState.error.message)
-            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    private fun showErrorScreen(error: String?) {
-        showViewError()
-        error_textview.text = error ?: getString(R.string.undefined_error)
-        reload_button.setOnClickListener {
-            model.getLiveData("hi", true)
-        }
+    override fun setDataToAdapter(data: List<DataModel>) {
+        adapter.setData(data)
     }
 
-    private fun showViewSuccess() {
-        success_linear_layout.visibility = View.VISIBLE
-        loading_frame_layout.visibility = View.GONE
-        error_linear_layout.visibility = View.GONE
-    }
-
-    private fun showViewLoading() {
-        success_linear_layout.visibility = View.GONE
-        loading_frame_layout.visibility = View.VISIBLE
-        error_linear_layout.visibility = View.GONE
-    }
-
-    private fun showViewError() {
-        success_linear_layout.visibility = View.GONE
-        loading_frame_layout.visibility = View.GONE
-        error_linear_layout.visibility = View.VISIBLE
+    private fun setActionbarHomeButtonAsUp() {
+        val activity = activity as MainActivity
+        activity.supportActionBar?.setHomeButtonEnabled(false)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }
 

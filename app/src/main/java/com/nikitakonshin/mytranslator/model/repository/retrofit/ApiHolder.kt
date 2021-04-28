@@ -23,7 +23,7 @@ class ApiHolder {
 
     private val gson = GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
-        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DOTS)
+        .setFieldNamingPolicy(FieldNamingPolicy.IDENTITY)
         .create()
 
     private fun createClient(interceptor: Interceptor): OkHttpClient =

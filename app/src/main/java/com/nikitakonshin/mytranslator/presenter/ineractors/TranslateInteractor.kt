@@ -3,18 +3,20 @@ package com.nikitakonshin.mytranslator.presenter.ineractors
 import com.nikitakonshin.mytranslator.model.entity.AppState
 import com.nikitakonshin.mytranslator.model.entity.DataModel
 import com.nikitakonshin.mytranslator.model.repository.IDataServer
-import io.reactivex.Single
-import kotlinx.coroutines.Deferred
+import com.nikitakonshin.mytranslator.model.repository.IDataServerLocal
 
 class TranslateInteractor(
     private val remoteRepository: IDataServer<List<DataModel>>,
-    private val localRepository: IDataServer<List<DataModel>>
+    private val localRepository: IDataServerLocal<List<DataModel>>
 ) : Intetactor<AppState> {
     override suspend fun getData(word: String, fromRemoteSource: Boolean): AppState {
-        return AppState.Success(if (fromRemoteSource) {
-            remoteRepository.getData(word)
+        val appState: AppState
+        if (fromRemoteSource) {
+            appState = AppState.Success(remoteRepository.getData(word))
+            localRepository.saveToDB(appState)
         } else {
-            localRepository.getData(word)
-        })
+            appState = AppState.Success(localRepository.getData(word))
+        }
+        return appState
     }
 }
