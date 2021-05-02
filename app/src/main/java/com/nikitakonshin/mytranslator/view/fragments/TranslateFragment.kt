@@ -3,10 +3,11 @@ package com.nikitakonshin.mytranslator.view.fragments
 import android.os.Bundle
 import android.view.*
 import androidx.lifecycle.Observer
+import com.nikitakonshin.core.fragment.BaseFragment
+import com.nikitakonshin.model.entity.AppState
+import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.mytranslator.MainActivity
 import com.nikitakonshin.mytranslator.R
-import com.nikitakonshin.mytranslator.model.entity.AppState
-import com.nikitakonshin.mytranslator.model.entity.DataModel
 import com.nikitakonshin.mytranslator.utils.convertMeaningsToString
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
@@ -33,7 +34,7 @@ class TranslateFragment : BaseFragment<AppState>() {
                     R.id.container, DescriptionFragment.newInstance(
                         data.text,
                         convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
+                        data.meanings!![0].imageUrl
                     )
                 )?.addToBackStack(null)
                     ?.commit()

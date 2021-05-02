@@ -6,10 +6,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import com.nikitakonshin.core.fragment.BaseFragment
+import com.nikitakonshin.model.entity.AppState
+import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.mytranslator.MainActivity
 import com.nikitakonshin.mytranslator.R
-import com.nikitakonshin.mytranslator.model.entity.AppState
-import com.nikitakonshin.mytranslator.model.entity.DataModel
 import com.nikitakonshin.mytranslator.view.adapter.HistoryRVAdapter
 import com.nikitakonshin.mytranslator.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.fragment_history.*
