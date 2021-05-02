@@ -1,14 +1,15 @@
 package com.nikitakonshin.mytranslator.di
 
 import androidx.room.Room
-import com.nikitakonshin.mytranslator.model.entity.DataModel
-import com.nikitakonshin.mytranslator.model.repository.*
-import com.nikitakonshin.mytranslator.model.room.HistoryDao
-import com.nikitakonshin.mytranslator.model.room.HistoryDataBase
+import com.nikitakonshin.model.entity.DataModel
+import com.nikitakonshin.model.room.HistoryDao
+import com.nikitakonshin.model.room.HistoryDataBase
+
 import com.nikitakonshin.mytranslator.presenter.ineractors.HistoryInteractor
 import com.nikitakonshin.mytranslator.presenter.ineractors.TranslateInteractor
 import com.nikitakonshin.mytranslator.viewmodel.HistoryViewModel
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
+import com.nikitakonshin.repository.*
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 

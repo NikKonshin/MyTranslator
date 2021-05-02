@@ -1,7 +1,8 @@
 package com.nikitakonshin.mytranslator.viewmodel
 
 import androidx.lifecycle.LiveData
-import com.nikitakonshin.mytranslator.model.entity.AppState
+import com.nikitakonshin.core.viewmodel.BaseViewModel
+import com.nikitakonshin.model.entity.AppState
 import com.nikitakonshin.mytranslator.presenter.ineractors.HistoryInteractor
 import kotlinx.coroutines.launch
 

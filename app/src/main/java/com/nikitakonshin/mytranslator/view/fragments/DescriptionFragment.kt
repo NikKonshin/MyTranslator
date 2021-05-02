@@ -17,6 +17,7 @@ import com.bumptech.glide.request.target.Target
 import com.nikitakonshin.mytranslator.MainActivity
 import com.nikitakonshin.mytranslator.R
 import com.nikitakonshin.mytranslator.utils.isOnline
+import com.nikitakonshin.utils.AlertDialogFragment
 import kotlinx.android.synthetic.main.fragment_description.*
 
 private const val TITLE_EXTRA = "package com.nikitakonshin.mytranslator.view.fragments.title"

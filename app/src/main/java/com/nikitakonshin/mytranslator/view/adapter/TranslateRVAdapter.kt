@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.mytranslator.R
-import com.nikitakonshin.mytranslator.model.entity.DataModel
 import kotlinx.android.synthetic.main.item_translate_recycler_view.view.*
 
 class TranslateRVAdapter(
