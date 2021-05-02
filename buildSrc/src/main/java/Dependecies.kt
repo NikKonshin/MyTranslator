@@ -64,6 +64,9 @@ object Versions{
 
     const val legacy = "1.0.0"
 
+    const val googlePlayCore = "1.6.3"
+
+
 }
 
 object Tools {
@@ -79,7 +82,6 @@ object Design {
 
 object Kotlin {
     const val core = "androidx.core:core-ktx:${Versions.core}"
-    //    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.stdlib}"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.stdlib}"
     const val coroutines_core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutinesCore}"
     const val coroutines_android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesAndroid}"
@@ -133,4 +135,8 @@ object Dagger {
 
 object Legacy{
     const val support = "androidx.legacy:legacy-support-v4:${Versions.legacy}"
+}
+
+object GooglePlay {
+    const val googlePlayCore = "com.google.android.play:core:${Versions.googlePlayCore}"
 }

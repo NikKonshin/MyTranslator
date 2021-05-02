@@ -1,9 +1,8 @@
-package com.nikitakonshin.mytranslator.viewmodel
+package com.nikitakonshin.historyscreen
 
 import androidx.lifecycle.LiveData
 import com.nikitakonshin.core.viewmodel.BaseViewModel
 import com.nikitakonshin.model.entity.AppState
-import com.nikitakonshin.mytranslator.presenter.ineractors.HistoryInteractor
 import kotlinx.coroutines.launch
 
 class HistoryViewModel(private val interactor: HistoryInteractor) : BaseViewModel<AppState>() {

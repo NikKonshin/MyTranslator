@@ -1,11 +1,10 @@
-package com.nikitakonshin.mytranslator.view.adapter
+package com.nikitakonshin.historyscreen
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.nikitakonshin.model.entity.DataModel
-import com.nikitakonshin.mytranslator.R
 import kotlinx.android.synthetic.main.item_history_recycler_view.view.*
 
 class HistoryRVAdapter : RecyclerView.Adapter<HistoryRVAdapter.ViewHolder>() {

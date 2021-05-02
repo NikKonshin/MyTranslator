@@ -1,5 +1,6 @@
-package com.nikitakonshin.mytranslator.presenter.ineractors
+package com.nikitakonshin.historyscreen
 
+import com.nikitakonshin.core.viewmodel.Intetactor
 import com.nikitakonshin.model.entity.AppState
 import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.repository.IDataServer
