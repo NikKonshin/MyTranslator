@@ -2,11 +2,18 @@ package com.nikitakonshin.mytranslator.view.fragments
 
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
+import com.nikitakonshin.core.fragment.BaseFragment
+import com.nikitakonshin.model.entity.AppState
+import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.mytranslator.MainActivity
 import com.nikitakonshin.mytranslator.R
-import com.nikitakonshin.mytranslator.model.entity.AppState
-import com.nikitakonshin.mytranslator.model.entity.DataModel
+import com.nikitakonshin.mytranslator.di.injectDependencies
 import com.nikitakonshin.mytranslator.utils.convertMeaningsToString
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
@@ -15,12 +22,16 @@ import org.koin.android.viewmodel.ext.android.viewModel
 
 class TranslateFragment : BaseFragment<AppState>() {
 
+    private lateinit var splitInstallManager: SplitInstallManager
+
     override val model by viewModel<TranslateViewModel>()
     private val observer = Observer<AppState> { renderData(it) }
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
+        private const val HISTORY_FRAGMENT_PATH = "com.nikitakonshin.historyscreen.HistoryFragment"
+        private const val HISTORY_FRAGMENT_FEATURE_NAME = "historyscreen"
     }
 
     private val adapter: TranslateRVAdapter by lazy {
@@ -33,7 +44,7 @@ class TranslateFragment : BaseFragment<AppState>() {
                     R.id.container, DescriptionFragment.newInstance(
                         data.text,
                         convertMeaningsToString(data.meanings!!),
-                        data.meanings[0].imageUrl
+                        data.meanings!![0].imageUrl
                     )
                 )?.addToBackStack(null)
                     ?.commit()
@@ -50,7 +61,8 @@ class TranslateFragment : BaseFragment<AppState>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        setActionbarHomeButtonAsUp()
+        setActionbarHomeButtonAsUp(false)
+        injectDependencies()
         main_activity_recyclerview.adapter = adapter
         search_fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
@@ -72,22 +84,45 @@ class TranslateFragment : BaseFragment<AppState>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.menu_history -> {
-                fragmentManager?.beginTransaction()
-                    ?.replace(R.id.container, HistoryFragment())?.addToBackStack(null)?.commit()
+                startHistoryFragment()
+                setActionbarHomeButtonAsUp(true)
                 return true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    private fun startHistoryFragment() {
+        val fragment = Class.forName(HISTORY_FRAGMENT_PATH).newInstance() as Fragment
+        splitInstallManager = SplitInstallManagerFactory.create(this.context)
+        val request = SplitInstallRequest
+            .newBuilder()
+            .addModule(HISTORY_FRAGMENT_FEATURE_NAME)
+            .build()
+
+        splitInstallManager
+            .startInstall(request)
+            .addOnSuccessListener {
+                fragmentManager?.beginTransaction()
+                    ?.replace(R.id.container, fragment)?.addToBackStack(null)?.commit()
+            }
+            .addOnFailureListener {
+                Toast.makeText(
+                    this.context,
+                    "Couldn't download feature: " + it.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+    }
+
     override fun setDataToAdapter(data: List<DataModel>) {
         adapter.setData(data)
     }
 
-    private fun setActionbarHomeButtonAsUp() {
+    private fun setActionbarHomeButtonAsUp(visible: Boolean) {
         val activity = activity as MainActivity
-        activity.supportActionBar?.setHomeButtonEnabled(false)
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        activity.supportActionBar?.setHomeButtonEnabled(visible)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(visible)
     }
 }
 

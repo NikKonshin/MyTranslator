@@ -1,6 +1,6 @@
 package com.nikitakonshin.mytranslator.presenter
 
-import com.nikitakonshin.mytranslator.model.entity.AppState
+import com.nikitakonshin.model.entity.AppState
 import com.nikitakonshin.mytranslator.view.IView
 
 interface IPresenter<T : AppState, V: IView> {
