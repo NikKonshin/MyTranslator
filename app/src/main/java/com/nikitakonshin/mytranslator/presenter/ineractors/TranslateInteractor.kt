@@ -1,9 +1,9 @@
 package com.nikitakonshin.mytranslator.presenter.ineractors
 
-import com.nikitakonshin.mytranslator.model.entity.AppState
-import com.nikitakonshin.mytranslator.model.entity.DataModel
-import com.nikitakonshin.mytranslator.model.repository.IDataServer
-import com.nikitakonshin.mytranslator.model.repository.IDataServerLocal
+import com.nikitakonshin.model.entity.AppState
+import com.nikitakonshin.model.entity.DataModel
+import com.nikitakonshin.repository.IDataServer
+import com.nikitakonshin.repository.IDataServerLocal
 
 class TranslateInteractor(
     private val remoteRepository: IDataServer<List<DataModel>>,
