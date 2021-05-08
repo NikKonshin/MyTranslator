@@ -5,10 +5,12 @@ import com.nikitakonshin.model.entity.DataModel
 import com.nikitakonshin.model.room.HistoryDao
 import com.nikitakonshin.model.room.HistoryDataBase
 import com.nikitakonshin.mytranslator.presenter.ineractors.TranslateInteractor
+import com.nikitakonshin.mytranslator.view.fragments.TranslateFragment
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
 import com.nikitakonshin.repository.*
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.core.context.loadKoinModules
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 fun injectDependencies() = loadModules
@@ -32,8 +34,8 @@ val application = module {
 }
 
 val interactor = module {
-    single {
-        TranslateInteractor(get(), get())
+    scope(named<TranslateFragment>()) {
+       scoped {TranslateInteractor(get(), get())}
     }
     viewModel {
         TranslateViewModel(get())

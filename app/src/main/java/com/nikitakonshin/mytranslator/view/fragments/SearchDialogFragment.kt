@@ -6,23 +6,29 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.nikitakonshin.mytranslator.R
-import kotlinx.android.synthetic.main.search_dialog_fragment.*
+import com.nikitakonshin.utils.viewById
 
 class SearchDialogFragment : BottomSheetDialogFragment() {
 
     private var onSearchClickListener: OnSearchClickListener? = null
-    private val textWatcher = object : TextWatcher{
+    private val searchEditText by viewById<EditText>(R.id.search_edit_text)
+    private val searchButtonTextView by viewById<TextView>(R.id.search_button_textview)
+    private val clearTextImageView by viewById<ImageView>(R.id.clear_text_imageview)
+    private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            if (search_edit_text.text != null && search_edit_text.text.toString().isNotEmpty()){
-                search_button_textview.isEnabled = true
-                clear_text_imageview.visibility = View.VISIBLE
-            } else{
-                search_button_textview.isEnabled = false
-                clear_text_imageview.visibility = View.GONE
+            if (searchEditText.text != null && searchEditText.text.toString().isNotEmpty()) {
+                searchButtonTextView.isEnabled = true
+                clearTextImageView.visibility = View.VISIBLE
+            } else {
+                searchButtonTextView.isEnabled = false
+                clearTextImageView.visibility = View.GONE
             }
         }
 
@@ -31,13 +37,14 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
 
     private val onSearchButtonClickListener =
         View.OnClickListener {
-            onSearchClickListener?.onClick(search_edit_text.text.toString())
+            onSearchClickListener?.onClick(searchEditText.text.toString())
             dismiss()
         }
 
     internal fun setOnSearchClickListener(listener: OnSearchClickListener) {
         onSearchClickListener = listener
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,8 +55,8 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        search_button_textview.setOnClickListener(onSearchButtonClickListener)
-        search_edit_text.addTextChangedListener(textWatcher)
+        searchButtonTextView.setOnClickListener(onSearchButtonClickListener)
+        searchEditText.addTextChangedListener(textWatcher)
         addOnClearClickListener()
     }
 
@@ -63,10 +70,10 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
         fun onClick(searchWord: String)
     }
 
-    private fun addOnClearClickListener(){
-        clear_text_imageview.setOnClickListener {
-            search_edit_text.setText("")
-            search_button_textview.isEnabled = false
+    private fun addOnClearClickListener() {
+        clearTextImageView.setOnClickListener {
+            searchEditText.setText("")
+            searchButtonTextView.isEnabled = false
         }
     }
 

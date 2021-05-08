@@ -6,17 +6,19 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.nikitakonshin.core.fragment.BaseFragment
 import com.nikitakonshin.historyscreen.di.injectDependencies
 import com.nikitakonshin.model.entity.AppState
 import com.nikitakonshin.model.entity.DataModel
-import kotlinx.android.synthetic.main.fragment_history.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import com.nikitakonshin.utils.viewById
+import org.koin.android.scope.currentScope
 
 class HistoryFragment : BaseFragment<AppState>() {
 
-    override val model by viewModel<HistoryViewModel>()
+    override lateinit var model: HistoryViewModel
     private val adapter: HistoryRVAdapter by lazy { HistoryRVAdapter() }
+    private val historyActivityRecyclerView by viewById<RecyclerView>(R.id.history_activity_recyclerview)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +46,9 @@ class HistoryFragment : BaseFragment<AppState>() {
     private fun initViews() {
         setHasOptionsMenu(true)
         injectDependencies()
-        history_activity_recyclerview.adapter = adapter
+        val viewModel: HistoryViewModel by currentScope.inject()
+        model = viewModel
+        historyActivityRecyclerView.adapter = adapter
     }
 
     override fun setDataToAdapter(data: List<DataModel>) {

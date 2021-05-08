@@ -13,7 +13,7 @@ private const val DIALOG_FRAGMENT_TAG = "74a54328-5d62-46bf-ab6b-cbf5d8c79522"
 
 abstract class BaseFragment<T : AppState> : Fragment() {
 
-    abstract val model: BaseViewModel<T>
+    abstract val model: BaseViewModel<T>?
 
     protected fun renderData(appState: T) {
         when (appState) {

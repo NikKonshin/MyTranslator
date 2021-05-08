@@ -5,6 +5,8 @@ import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
@@ -17,15 +19,18 @@ import com.nikitakonshin.mytranslator.di.injectDependencies
 import com.nikitakonshin.mytranslator.utils.convertMeaningsToString
 import com.nikitakonshin.mytranslator.view.adapter.TranslateRVAdapter
 import com.nikitakonshin.mytranslator.viewmodel.TranslateViewModel
+import com.nikitakonshin.utils.viewById
 import kotlinx.android.synthetic.main.fragment_translate.*
-import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.android.scope.currentScope
 
 class TranslateFragment : BaseFragment<AppState>() {
 
     private lateinit var splitInstallManager: SplitInstallManager
 
-    override val model by viewModel<TranslateViewModel>()
+    override lateinit var model: TranslateViewModel
     private val observer = Observer<AppState> { renderData(it) }
+    private val recyclerView by viewById<RecyclerView>(R.id.main_activity_recyclerview)
+    private val fab by viewById<FloatingActionButton>(R.id.search_fab)
 
     companion object {
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
@@ -61,10 +66,12 @@ class TranslateFragment : BaseFragment<AppState>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        setActionbarHomeButtonAsUp(false)
         injectDependencies()
-        main_activity_recyclerview.adapter = adapter
-        search_fab.setOnClickListener {
+        setActionbarHomeButtonAsUp(false)
+        val viewModel: TranslateViewModel by currentScope.inject()
+        model = viewModel
+        recyclerView.adapter = adapter
+        fab.setOnClickListener {
             val searchDialogFragment = SearchDialogFragment.newInstance()
             searchDialogFragment.setOnSearchClickListener(object :
                 SearchDialogFragment.OnSearchClickListener {
