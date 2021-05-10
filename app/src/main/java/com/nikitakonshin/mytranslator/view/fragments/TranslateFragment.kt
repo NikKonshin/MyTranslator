@@ -1,6 +1,9 @@
 package com.nikitakonshin.mytranslator.view.fragments
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -37,6 +40,8 @@ class TranslateFragment : BaseFragment<AppState>() {
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
         private const val HISTORY_FRAGMENT_PATH = "com.nikitakonshin.historyscreen.HistoryFragment"
         private const val HISTORY_FRAGMENT_FEATURE_NAME = "historyscreen"
+        private const val TRANSLATE_FRAGMENT_SETTINGS_REQUEST_CODE = 120
+
     }
 
     private val adapter: TranslateRVAdapter by lazy {
@@ -95,6 +100,10 @@ class TranslateFragment : BaseFragment<AppState>() {
                 setActionbarHomeButtonAsUp(true)
                 return true
             }
+            R.id.menu_screen_settings ->{
+                startActivityForResult(Intent(Settings.Panel.ACTION_INTERNET_CONNECTIVITY), TRANSLATE_FRAGMENT_SETTINGS_REQUEST_CODE)
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -120,6 +129,13 @@ class TranslateFragment : BaseFragment<AppState>() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TRANSLATE_FRAGMENT_SETTINGS_REQUEST_CODE){
+                Toast.makeText(this.context, "result_ok", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun setDataToAdapter(data: List<DataModel>) {
